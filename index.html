@@ -4,23 +4,29 @@
       <meta charset="utf-8">
       <title>Canvas</title>
       <style>
+        body {
+          display: grid;
+          place-items: center;
+          font-family: system-ui;
+        }
 
+        canvas {
+          pointer-events: none;
+        }
       </style>
    </head>
    <body>
-      <div class="spinner" id='spinner'></div>
-      <div class="emscripten" id="status">Downloading...</div>
-      </span>
-      <div class="emscripten">
-         <progress value="0" max="100" id="progress" hidden=1></progress>
-      </div>
+    <section id="info">
+      <div class="emscripten" id="status">Downloading…</div>
+      <progress value="0" max="100" id="progress"></progress>
+    </section>
       <main>
-         <canvas id="canvas" oncontextmenu="event.preventDefault()"></canvas>
+         <canvas id="canvas" aria-description="Radial gradient"></canvas>
       </main>
       <script>
-         var statusElement = document.getElementById('status');
-         var progressElement = document.getElementById('progress');
-         var spinnerElement = document.getElementById('spinner');
+         var statusElement = document.getElementById("status");
+         var progressElement = document.getElementById("progress");
+         var info = document.getElementById("info");
          
          var Module = {
            preRun: [],
@@ -56,25 +62,25 @@
                progressElement.value = parseInt(m[2])*100;
                progressElement.max = parseInt(m[4])*100;
                progressElement.hidden = false;
-               spinnerElement.hidden = false;
              } else {
                progressElement.value = null;
                progressElement.max = null;
                progressElement.hidden = true;
-               if (!text) spinnerElement.style.display = 'none';
              }
              statusElement.innerHTML = text;
            },
            totalDependencies: 0,
            monitorRunDependencies: function(left) {
              this.totalDependencies = Math.max(this.totalDependencies, left);
-             Module.setStatus(left ? 'Preparing... (' + (this.totalDependencies-left) + '/' + this.totalDependencies + ')' : 'All downloads complete.');
+             Module.setStatus(left ? 'Preparing… (' + (this.totalDependencies-left) + '/' + this.totalDependencies + ')' : 'All downloads complete.');
+             info.setAttribute("aria-live", "off");
+             info.setAttribute("aria-hidden", "true");
+
            }
          };
-         Module.setStatus('Downloading...');
+         Module.setStatus('Downloading…');
          window.onerror = function(event) {
            Module.setStatus('Exception thrown, please see your Javascript console for info.');
-           spinnerElement.style.display = 'none';
            Module.setStatus = function(text) {
              if (text) Module.printErr('[post-exception status] ' + text);
            };
