@@ -2,7 +2,7 @@
 <html lang="en">
    <head>
       <meta charset="utf-8">
-      <title>Canvas</title>
+      <title>WASM Canvas</title>
       <style>
         body {
           display: grid;
@@ -12,81 +12,87 @@
 
         canvas {
           pointer-events: none;
-          image-rendering: pixelated;
         }
       </style>
+      <link rel="icon" href="https://twemoji.maxcdn.com/2/svg/1f5bc.svg" type="image/svg+xml">
    </head>
    <body>
     <section id="info">
       <div class="emscripten" id="status">Downloading…</div>
       <progress value="0" max="100" id="progress"></progress>
     </section>
-      <main>
-         <canvas id="canvas" aria-description="Radial gradient"></canvas>
-      </main>
-      <script>
-         var statusElement = document.getElementById("status");
-         var progressElement = document.getElementById("progress");
-         var info = document.getElementById("info");
-         
-         var Module = {
-           preRun: [],
-           postRun: [],
-           print: (function() {
-             var element = document.getElementById('output');
-             if (element) element.value = ''; // clear browser cache
-             return function(text) {
-               if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
-               console.log(text);
-               if (element) {
-                 element.value += text + "\n";
-                 element.scrollTop = element.scrollHeight; // focus on bottom
-               }
-             };
-           })(),
-           canvas: (function() {
-             var canvas = document.getElementById('canvas');
-             canvas.addEventListener("webglcontextlost", function(e) { alert('WebGL context lost. Please reload the page.'); e.preventDefault(); }, false);
-         
-             return canvas;
-           })(),
-           setStatus: function(text) {
-             if (!Module.setStatus.last) Module.setStatus.last = { time: Date.now(), text: '' };
-             if (text === Module.setStatus.last.text) return;
-             var m = text.match(/([^(]+)\((\d+(\.\d+)?)\/(\d+)\)/);
-             var now = Date.now();
-             if (m && now - Module.setStatus.last.time < 30) return; // if this is a progress update, skip it if too soon
-             Module.setStatus.last.time = now;
-             Module.setStatus.last.text = text;
-             if (m) {
-               text = m[1];
-               progressElement.value = parseInt(m[2])*100;
-               progressElement.max = parseInt(m[4])*100;
-               progressElement.hidden = false;
-             } else {
-               progressElement.value = null;
-               progressElement.max = null;
-               progressElement.hidden = true;
-             }
-             statusElement.innerHTML = text;
-           },
-           totalDependencies: 0,
-           monitorRunDependencies: function(left) {
-             this.totalDependencies = Math.max(this.totalDependencies, left);
-             Module.setStatus(left ? 'Preparing… (' + (this.totalDependencies-left) + '/' + this.totalDependencies + ')' : 'All downloads complete.');
-             info.setAttribute("aria-live", "off");
-             info.setAttribute("aria-hidden", "true");
+    <main>
+       <canvas id="canvas" aria-description="Radial gradient"></canvas>
+    </main>
+    <script>
+      var statusElement = document.getElementById("status");
+      var progressElement = document.getElementById("progress");
+      var info = document.getElementById("info");
 
-           }
-         };
-         Module.setStatus('Downloading…');
-         window.onerror = function(event) {
-           Module.setStatus('Exception thrown, please see your Javascript console for info.');
-           Module.setStatus = function(text) {
-             if (text) Module.printErr('[post-exception status] ' + text);
-           };
-         };
-      </script>
-      <script src="canvas.js" async></script>
+      var Module = {
+        preRun: [],
+        postRun: [],
+        print: (function () {
+          var element = document.getElementById('output');
+          if (element) element.value = ''; // clear browser cache
+          return function (text) {
+            if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
+            console.log(text);
+            if (element) {
+              element.value += text + "\n";
+              element.scrollTop = element.scrollHeight; // focus on bottom
+            }
+          };
+        })(),
+        canvas: (function () {
+          var canvas = document.getElementById('canvas');
+          canvas.addEventListener("webglcontextlost", function (e) {
+            alert('WebGL context lost. Please reload the page.');
+            e.preventDefault();
+          }, false);
+
+          return canvas;
+        })(),
+        setStatus: function (text) {
+          if (!Module.setStatus.last) Module.setStatus.last = {
+            time: Date.now(),
+            text: ''
+          };
+          if (text === Module.setStatus.last.text) return;
+          var m = text.match(/([^(]+)\((\d+(\.\d+)?)\/(\d+)\)/);
+          var now = Date.now();
+          if (m && now - Module.setStatus.last.time < 30) return; // if this is a progress update, skip it if too soon
+          Module.setStatus.last.time = now;
+          Module.setStatus.last.text = text;
+          if (m) {
+            text = m[1];
+            progressElement.value = parseInt(m[2]) * 100;
+            progressElement.max = parseInt(m[4]) * 100;
+            progressElement.hidden = false;
+          } else {
+            progressElement.value = null;
+            progressElement.max = null;
+            progressElement.hidden = true;
+          }
+          statusElement.innerHTML = text;
+        },
+        totalDependencies: 0,
+        monitorRunDependencies: function (left) {
+          this.totalDependencies = Math.max(this.totalDependencies, left);
+          Module.setStatus(left ? 'Preparing… (' + (this.totalDependencies - left) + '/' + this.totalDependencies + ')' : 'All downloads complete.');
+          info.setAttribute("aria-live", "off");
+          info.setAttribute("aria-hidden", "true");
+
+        }
+      };
+      Module.setStatus('Downloading…');
+      window.onerror = function (event) {
+        Module.setStatus('Exception thrown, please see your Javascript console for info.');
+        Module.setStatus = function (text) {
+          if (text) Module.printErr('[post-exception status] ' + text);
+        };
+      };
+    </script>
+    <script src="canvas.js" async></script>
    </body>
 </html>
