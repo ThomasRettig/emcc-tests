@@ -3,18 +3,66 @@
    <head>
       <meta charset="utf-8">
       <title>WASM Canvas</title>
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link rel="icon" href="https://twemoji.maxcdn.com/2/svg/1f5bc.svg" type="image/svg+xml">
       <style>
+        html {
+          -webkit-font-smoothing: antialiased;
+        }
+
         body {
           display: grid;
           place-items: center;
+          padding: 5vw;
           font-family: system-ui;
+          text-align: center;
+        }
+
+        h1 {
+          font-weight: 500;
+          margin-bottom: 0;
+        }
+
+        p {
+          margin-top: 0;
+          margin-bottom: 0;
+          max-width: 400px;
+        }
+
+        a {
+          text-decoration: none;
+          color: #0000cd;
+        }
+
+        a:hover {
+          opacity: 0.75;
         }
 
         canvas {
           pointer-events: none;
+          margin-top: 16px;
+          max-width: 95%;
+        }
+
+        progress {
+          accent-color: mediumblue;
+        }
+
+        @media screen and (prefers-color-scheme: dark) {
+          :not(a, progress) {
+            background-color: #131313;
+            color: #ddd;
+          }
+
+          a {
+            color: #8ae2ff;
+          }
+
+          progress {
+            accent-color: royalblue;
+          }
         }
       </style>
-      <link rel="icon" href="https://twemoji.maxcdn.com/2/svg/1f5bc.svg" type="image/svg+xml">
    </head>
    <body>
     <section id="info">
@@ -22,7 +70,9 @@
       <progress value="0" max="100" id="progress"></progress>
     </section>
     <main>
-       <canvas id="canvas" aria-description="Radial gradient"></canvas>
+      <h1>SDL Gradient</h1>
+      <p><a href="about">Learn more →</a></p>
+      <canvas id="canvas" aria-description="Radial gradient"></canvas>
     </main>
     <script>
       var statusElement = document.getElementById("status");
